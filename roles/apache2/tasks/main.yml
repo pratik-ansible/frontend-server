@@ -1,0 +1,18 @@
+---
+- name: install apache2 package
+  apt:
+    name: apache2
+    state: present 
+
+- name: enable apache modules
+  command: a2enmod {{ item }}
+  with_items:
+    - rewrite
+
+- name: create .htaccess file in apache document root
+  copy: src=.htaccess dest=/var/www/html/.htaccess owner=root group=root mode=0644
+  notify:
+    - restart apache2
+
+- name: restart apache2
+  service: name=apache2 state=restarted
